@@ -29,7 +29,7 @@ class Pusher {
       Map<String, void Function(Event)>();
 
   /// Setup app key and options
-  static Future init(
+  static Future<void> init(
     String appKey,
     PusherOptions options, {
     bool enableLogging = false,
@@ -49,9 +49,9 @@ class Pusher {
   }
 
   /// Connect the client to pusher
-  static Future connect({
-    required void Function(ConnectionStateChange) onConnectionStateChange,
-    required void Function(ConnectionError) onError,
+  static Future<void> connect({
+    void Function(ConnectionStateChange)? onConnectionStateChange,
+    void Function(ConnectionError)? onError,
   }) async {
     _onConnectionStateChange = onConnectionStateChange;
     _onError = onError;
@@ -59,7 +59,7 @@ class Pusher {
   }
 
   /// Disconnect the client from pusher
-  static Future disconnect() async {
+  static Future<void> disconnect() async {
     await _channel.invokeMethod('disconnect');
   }
 
@@ -71,11 +71,11 @@ class Pusher {
   }
 
   /// Unsubscribe from a channel
-  static Future unsubscribe(String channelName) async {
+  static Future<void> unsubscribe(String channelName) async {
     await _channel.invokeMethod('unsubscribe', channelName);
   }
 
-  static Future _trigger(
+  static Future<void> _trigger(
       String channelName, String eventName, String data) async {
     final bindArgs = jsonEncode(BindArgs(
       channelName: channelName,
@@ -86,7 +86,7 @@ class Pusher {
     await _channel.invokeMethod('trigger', bindArgs);
   }
 
-  static Future _bind(
+  static Future<void> _bind(
     String channelName,
     String eventName, {
     required void Function(Event) onEvent,
@@ -100,7 +100,7 @@ class Pusher {
     await _channel.invokeMethod('bind', bindArgs);
   }
 
-  static Future _unbind(String channelName, String eventName) async {
+  static Future<void> _unbind(String channelName, String eventName) async {
     final bindArgs = jsonEncode(BindArgs(
       channelName: channelName,
       eventName: eventName,
@@ -115,9 +115,9 @@ class Pusher {
 
     if (message.isEvent) {
       var callback =
-          eventCallbacks[message.event.channel + message.event.event];
+          eventCallbacks[message.event!.channel + message.event!.event];
       if (callback != null) {
-        callback(message.event);
+        callback(message.event!);
       }
     } else if (message.isConnectionStateChange) {
       if (_onConnectionStateChange != null) {
@@ -161,17 +161,17 @@ class BindArgs {
 
 @JsonSerializable(includeIfNull: false)
 class PusherOptions {
-  final PusherAuth auth;
-  final String cluster;
-  final String host;
+  final PusherAuth? auth;
+  final String? cluster;
+  final String? host;
   final int port;
   final bool encrypted;
   final int activityTimeout;
 
   PusherOptions({
-    required this.auth,
-    required this.cluster,
-    required this.host,
+    this.auth,
+    this.cluster,
+    this.host,
     this.port = 443,
     this.encrypted = true,
     this.activityTimeout = 30000,
@@ -269,7 +269,7 @@ class Channel {
 
 @JsonSerializable()
 class PusherEventStreamMessage {
-  final Event event;
+  final Event? event;
   final ConnectionStateChange? connectionStateChange;
   final ConnectionError? connectionError;
 
