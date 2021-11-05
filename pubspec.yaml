@@ -4,7 +4,7 @@ version: 1.0.3
 homepage: https://github.com/ninjasolutions/flutter_pusher
 
 environment:
-  sdk: ">=2.2.2 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   json_annotation: ^4.0.0
